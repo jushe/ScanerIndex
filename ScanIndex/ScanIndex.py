@@ -1,6 +1,7 @@
 import os
 
-SYSTEMList = ["System", "SYSTEM", "system", "windows", "Windows", "WINDOWS", '$', '_', 'DRIVERS']
+SYSTEMList = ["System", "SYSTEM", "system", "windows", "Windows", "WINDOWS", '$', '_', 'DRIVERS', 'ini']
+ProgramList = ['.exe', 'sln', 'mp4', 'jpg', 'txt']
 def getTheTargetDisk():
 	""" 
 	Get the scanner 
@@ -16,9 +17,12 @@ def theLevelIndex(root):
 	return: int, 0 for A, 1 for B
 	"""
 	if os.path.isdir(root):
-		for filepath in os.listdir(root):
-			if  os.path.isfile (root + '//' + filepath):
-				return 1
+		try:
+			for filepath in os.listdir(root):
+				if  os.path.isfile (root + '//' + filepath) and (programName for programname in ProgramList if programName in root is True):
+					return 1
+		except WindowsError as e:
+			print e
 	return 0
 scanfile = open("E://scanReport.txt", "a")
 root = getTheTargetDisk()
@@ -36,8 +40,11 @@ while len(listA) > 0:
 		listA.remove(dirroot)
 		if os.path.isdir(dirroot):
 			if theLevelIndex(dirroot + '//') == 0:
-				for filepath in os.listdir(dirroot + '//'):
-					listA.append(dirroot + '//' + filepath)
+				try:
+					for filepath in os.listdir(dirroot + '//'):
+						listA.append(dirroot + '//' + filepath)
+				except WindowsError as e:
+					print e
 			else:
 				print dirroot
 				listB.append(dirroot)
@@ -47,3 +54,4 @@ while len(listA) > 0:
 for item in listB:
 	scanfile.writelines(item + '\n')
 scanfile.close()
+#test
